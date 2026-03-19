@@ -29,6 +29,6 @@ Also I wanted to make my own waist-level camera because it seems like a really c
  -  **Buttons / Potentiometer**
 
 ## Maybe ??
-  - Instead of a regular camera us an ai camera module so I can detect people and object and catigorize them 
+  - Instead of a regular camera us an ai camera module so I can detect people and object and categorize them 
   - If I cannot get the lense working I will switch to a screen on the top
   - Make the website open so anyone can come in and edit the photos and the result stay
