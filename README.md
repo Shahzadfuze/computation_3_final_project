@@ -20,4 +20,8 @@ Also I wanted to make my own waist-level camera because it seems like a really c
 </p>
 
 
-
+## Hardware
+ - Raseberry Pi 5 
+ - Raseberry Pi Camera Module 3
+ -  0.91 Inch I2C OLED Display Module IIC 
+ -  Pisugar2 Plus Portable Module Platform ( Battery ) 
