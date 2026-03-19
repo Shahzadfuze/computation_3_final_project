@@ -11,9 +11,10 @@ This is inspired by the ***Yashica Yashicaflex***:
 ***What***
 I will be of course taking photos as my data, with hopefully the time it was taken location. 
 (I might be able to use my phones hotspot as a wifi source to connect to the cloud when uploading photos) 
-Then once they are on a website I could edit them like applying filters and transforming the photos, kind of like adobe lightroom (but my version) 
+Then once they are on a website I could edit them like applying filters and transforming the photos, kind of like adobe lightroom (but my version)
+
 ***Why***
-The reason I want to make a camera specificlly is I’m interested in the challenge of the hardware along side the software
+The reason I want to make a camera specificlly is I’m interested in the challenge of the hardware along side the software.
 Also I wanted to make my own waist-level camera because it seems like a really cool and novel thing, although I am not too sure yet if I have the time to make it reflective see the image: 
 <p align="center">
   <img src="images/waist-level-camera-diagram.jpg" width="400"/>
