@@ -3,5 +3,5 @@
 ## My project
 I want to propose a digital camera with a waist-level viewfinder using a rasepberry pi 5 and camera module. This is inspired by the Yashica Yashicaflex:
 <p align="center">
-  <img src="images/camera.png" width="400"/>
+  <img src="images/yashica_cam.JPG" width="400"/>
 </p>
