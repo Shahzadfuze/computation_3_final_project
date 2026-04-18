@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fuze-Cam</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; }
+    nav { background: #1a1a1a; border-bottom: 1px solid #2a2a2a; padding: 1rem 2rem; display: flex; align-items: center; gap: 2rem; }
+    nav .brand { font-size: 1.2rem; font-weight: 700; color: #fff; text-decoration: none; }
+    nav a { color: #aaa; text-decoration: none; }
+    nav a:hover { color: #fff; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .flash { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.9rem; }
+    .flash.success { background: #1a3a1a; border: 1px solid #2d6a2d; color: #6fcf6f; }
+    .flash.error   { background: #3a1a1a; border: 1px solid #6a2d2d; color: #cf6f6f; }
+    .btn { display: inline-block; padding: 0.5rem 1.1rem; border-radius: 6px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: #3b82f6; color: #fff; }
+    .btn-danger  { background: #ef4444; color: #fff; }
+    .btn-ghost   { background: #2a2a2a; color: #e8e8e8; border: 1px solid #3a3a3a; }
+    .tag { display: inline-block; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.78rem; color: #aaa; text-decoration: none; }
+    .tag:hover, .tag.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+    input, textarea { outline: none; }
+    input:focus, textarea:focus { border-color: #3b82f6 !important; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="brand" href="/">📷 Fuze-Cam</a>
+    <a href="/">Gallery</a>
+  </nav>
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

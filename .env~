@@ -1,0 +1,18 @@
+# Camera
+BUTTON_PIN=17
+COOLDOWN_SEC=3
+SETTLE_TIME=2.0
+EXPOSURE_COMP=1.0
+ANALOGUE_GAIN=2.0
+
+
+# MongoDB
+MONGO_URI=mongodb://localhost:27017/
+MONGO_DB=camera_project
+MONGO_COLLECTION=captures
+
+
+
+# Flask
+FLASK_SECRET_KEY=pick_any_random_string_here
+FLASK_PORT=5000

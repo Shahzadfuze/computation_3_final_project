@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="display:flex; gap:2rem; align-items:flex-start;">
+  <meta http-equiv="refresh" content="10">
+
+  <!-- Tag sidebar -->
+  <aside style="min-width:160px; position:sticky; top:2rem;">
+    <p style="font-size:0.8rem; color:#666; margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Filter by tag</p>
+    <div style="display:flex; flex-direction:column; gap:0.4rem;">
+      <a href="/" class="tag {% if not active_tag %}active{% endif %}">All photos</a>
+      {% for tag in all_tags %}
+        <a href="/?tag={{ tag }}" class="tag {% if tag == active_tag %}active{% endif %}">{{ tag }}</a>
+      {% endfor %}
+      {% if not all_tags %}
+        <p style="font-size:0.8rem; color:#444;">No tags yet</p>
+      {% endif %}
+    </div>
+  </aside>
+
+  <!-- Grid -->
+  <main style="flex:1;">
+    <p style="color:#555; font-size:0.85rem; margin-bottom:1.5rem;">
+      {{ photos|length }} photo{{ 's' if photos|length != 1 }}
+      {% if active_tag %} tagged <strong style="color:#3b82f6">#{{ active_tag }}</strong> — <a href="/" style="color:#555">clear</a>{% endif %}
+    </p>
+
+    {% if photos %}
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:1rem;">
+        {% for photo in photos %}
+          <a href="/photo/{{ photo._id }}" style="text-decoration:none; color:inherit;">
+            <div style="background:#1a1a1a; border:1px solid #2a2a2a; border-radius:10px; overflow:hidden;">
+              <img
+                src="data:image/jpeg;base64,{{ photo.image_b64 }}"
+                alt="{{ photo.filename }}"
+                style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;"
+              >
+              <div style="padding:0.6rem 0.75rem;">
+                <p style="font-size:0.75rem; color:#555; margin-bottom:0.4rem;">
+                  {{ photo.captured_at[:16].replace("T"," ") }}
+                </p>
+                <div style="display:flex; flex-wrap:wrap; gap:0.3rem;">
+                  {% for tag in (photo.get('user_tags', []) + photo.get('ai_tags', []))[:3] %}
+                    <span class="tag">{{ tag }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="text-align:center; padding:4rem; color:#444;">
+        <p style="font-size:1.1rem;">No photos yet</p>
+        <p style="font-size:0.85rem; margin-top:0.5rem;">Press the button on your Pi to take one!</p>
+      </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}
