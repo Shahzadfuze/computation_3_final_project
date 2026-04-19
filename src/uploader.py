@@ -4,6 +4,8 @@ import logging
 from datetime import datetime
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from PIL import Image
+from io import BytesIO
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -46,12 +48,19 @@ def already_uploaded(collection, filename: str) -> bool:
     return collection.find_one({"filename": filename}) is not None
 
 def build_doc(filename: str, image_b64: str) -> dict:
-    """Build the MongoDB document for a photo."""
+    # Generate thumbnail
+    img = Image.open(BytesIO(base64.b64decode(image_b64))).convert("RGB")
+    img.thumbnail((400, 300))
+    buf = BytesIO()
+    img.save(buf, format="JPEG", quality=60)
+    thumbnail_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+
     return {
         "filename":       filename,
         "captured_at":    datetime.now().isoformat(),
         "uploaded_at":    datetime.now().isoformat(),
         "image_b64":      image_b64,
+        "thumbnail_b64":  thumbnail_b64,
         "ai_description": "",
         "ai_tags":        [],
         "user_tags":      [],

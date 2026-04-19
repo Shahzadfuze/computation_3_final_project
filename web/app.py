@@ -216,17 +216,28 @@ def thumbnail(photo_id):
     try:
         p = get_collection().find_one(
             {"_id": ObjectId(photo_id)},
-            {"image_b64": 1}
+            {"thumbnail_b64": 1, "image_b64": 1}
         )
         if not p:
             return "", 404
-        image_data = base64.b64decode(p["image_b64"])
-        img = Image.open(BytesIO(image_data))
-        img.thumbnail((200, 150))
-        buffer = BytesIO()
-        img.save(buffer, format="JPEG", quality=70)
-        buffer.seek(0)
-        return send_file(buffer, mimetype="image/jpeg")
+
+        # Use pre-generated thumbnail if available, otherwise resize on the fly
+        b64 = p.get("thumbnail_b64") or p.get("image_b64")
+        if not b64:
+            return "", 404
+
+        image_data = base64.b64decode(b64)
+
+        # Only resize if we had to fall back to full image
+        if not p.get("thumbnail_b64"):
+            img = Image.open(BytesIO(image_data))
+            img.thumbnail((400, 300))
+            buf = BytesIO()
+            img.save(buf, format="JPEG", quality=60)
+            buf.seek(0)
+            return send_file(buf, mimetype="image/jpeg")
+
+        return send_file(BytesIO(image_data), mimetype="image/jpeg")
     except Exception:
         return "", 404
 

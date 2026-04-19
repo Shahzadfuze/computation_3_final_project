@@ -1,23 +1,34 @@
-from pymongo import MongoClient
 import os
+import base64
+from io import BytesIO
+from pymongo import MongoClient
+from PIL import Image
 from dotenv import load_dotenv
 
 load_dotenv('/home/weakahh_fuze/computation_3_final_project/.env')
 
-client = MongoClient(os.getenv('ATLAS_URI'))
-col = client['camera_project']['captures']
+col = MongoClient(os.getenv('ATLAS_URI'))['camera_project']['captures']
 
-# Keep only 20 most recent
-total = col.count_documents({})
-print(f"Total photos: {total}")
+photos = list(col.find({}, {'_id': 1, 'image_b64': 1, 'thumbnail_b64': 1}))
+print(f'Processing {len(photos)} photos...')
 
-keep = [
-        p['_id']
-            for p in col.find({}, {'_id': 1})
-                .sort('captured_at', -1)
-                    .limit(20)
-                    ]
+for p in photos:
+    if p.get('thumbnail_b64'):
+        continue
 
-result = col.delete_many({'_id': {'$nin': keep}})
-print(f"Deleted {result.deleted_count} photos")
-print(f"Remaining: {col.count_documents({})}")
+    img = Image.open(BytesIO(base64.b64decode(p['image_b64']))).convert('RGB')
+    img.thumbnail((400, 300))
+
+    buf = BytesIO()
+    img.save(buf, format='JPEG', quality=60)
+
+    col.update_one(
+        {'_id': p['_id']},
+        {'$set': {
+            'thumbnail_b64': base64.b64encode(buf.getvalue()).decode()
+        }}
+    )
+
+    print(f"Done: {p['_id']}")
+
+print("All done!")
