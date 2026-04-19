@@ -222,7 +222,7 @@ def thumbnail(photo_id):
             return "", 404
         image_data = base64.b64decode(p["image_b64"])
         img = Image.open(BytesIO(image_data))
-        img.thumbnail((400, 300))
+        img.thumbnail((200, 150))
         buffer = BytesIO()
         img.save(buffer, format="JPEG", quality=70)
         buffer.seek(0)
