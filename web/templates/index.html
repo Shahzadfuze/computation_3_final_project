@@ -30,7 +30,7 @@
           <a href="/photo/{{ photo._id }}" style="text-decoration:none; color:inherit;">
             <div style="background:#1a1a1a; border:1px solid #2a2a2a; border-radius:10px; overflow:hidden;">
 <img
-  src="/photo/{{ photo._id }}/thumbnail"
+  src="data:image/jpeg;base64,{{ photo.image_b64 }}"
   alt="{{ photo.filename }}"
   style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;"
   loading="lazy"

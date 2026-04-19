@@ -120,7 +120,7 @@ def index():
         "captured_at": 1,
         "user_tags":   1,
         "ai_tags":     1,
-        # NO image_b64 here
+        "image_b64":   1,  # Small enough now to include
     }).sort("captured_at", -1).skip((page - 1) * per_page).limit(per_page))
 
     all_tags = sorted(set(

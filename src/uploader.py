@@ -47,20 +47,25 @@ def encode_image(filepath: str) -> str | None:
 def already_uploaded(collection, filename: str) -> bool:
     return collection.find_one({"filename": filename}) is not None
 
-def build_doc(filename: str, image_b64: str) -> dict:
-    # Generate thumbnail
-    img = Image.open(BytesIO(base64.b64decode(image_b64))).convert("RGB")
-    img.thumbnail((400, 300))
-    buf = BytesIO()
-    img.save(buf, format="JPEG", quality=60)
-    thumbnail_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
 
+def resize_image(image_b64: str, max_width: int = 800, max_height: int = 600) -> str:
+    """Resize image to max dimensions before storing."""
+    image_data = base64.b64decode(image_b64)
+    img = Image.open(BytesIO(image_data)).convert("RGB")
+    img.thumbnail((max_width, max_height))
+    buf = BytesIO()
+    img.save(buf, format="JPEG", quality=80)
+    return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+
+def build_doc(filename: str, image_b64: str) -> dict:
+    resized_b64 = resize_image(image_b64)
     return {
         "filename":       filename,
         "captured_at":    datetime.now().isoformat(),
         "uploaded_at":    datetime.now().isoformat(),
-        "image_b64":      image_b64,
-        "thumbnail_b64":  thumbnail_b64,
+        "image_b64":      resized_b64,
+        "thumbnail_b64":  resized_b64,  # Same size, no separate thumbnail needed
         "ai_description": "",
         "ai_tags":        [],
         "user_tags":      [],
