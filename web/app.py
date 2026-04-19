@@ -105,29 +105,7 @@ def apply_edits(image_b64: str, brightness: float, contrast: float, saturation: 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
-    tag_filter = request.args.get("tag", "").strip()
-    collection = get_collection()
-
-    query = {}
-    if tag_filter:
-        query = {"$or": [{"ai_tags": tag_filter}, {"user_tags": tag_filter}]}
-
-    # Exclude image_b64 from gallery — only load it on single photo view
-    photos = list(collection.find(query, {
-        "filename":    1,
-        "captured_at": 1,
-        "user_tags":   1,
-        "ai_tags":     1,
-        "image_b64":   1,  # Still needed for thumbnails
-    }).sort("captured_at", -1))
-
-    all_tags = sorted(set(
-        tag
-        for p in collection.find({}, {"ai_tags": 1, "user_tags": 1})
-        for tag in p.get("ai_tags", []) + p.get("user_tags", [])
-    ))
-
-    return render_template("index.html", photos=photos, all_tags=all_tags, active_tag=tag_filter)
+    return "Server is working"
 
 @app.route("/photo/<photo_id>")
 def photo(photo_id):
