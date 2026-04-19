@@ -1,0 +1,6 @@
+flask
+pymongo
+dnspython
+pillow
+python-dotenv
+gunicorn

@@ -14,9 +14,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ── Config ────────────────────────────────────────────────────────────────────
-MONGO_URI        =  os.getenv("MONGO_URL")
+MONGO_URI        =  os.getenv("MONGO_URI")
 MONGO_DB         =  os.getenv("MONGO_DB")
 MONGO_COLLECTION =  os.getenv("MONGO_COLLECTION")
+ATLAS_URI        = os.getenv("ATLAS_URI")
 
 app = Flask(__name__)
 app.secret_key =    os.getenv("SECRET_KEY")
@@ -25,8 +26,17 @@ log = logging.getLogger(__name__)
 
 # ── MongoDB ───────────────────────────────────────────────────────────────────
 def get_collection():
-    client = MongoClient(MONGO_URI)
-    return client[MONGO_DB][MONGO_COLLECTION]
+    """Try Atlas first, fall back to local if unavailable."""
+    try:
+        client = MongoClient(ATLAS_URI, serverSelectionTimeoutMS=3000)
+        # Ping to verify the connection actually works
+        client.admin.command("ping")
+        log.info("Using Atlas")
+        return client[MONGO_DB][MONGO_COLLECTION]
+    except Exception:
+        log.warning("Atlas unavailable — falling back to local MongoDB")
+        client = MongoClient(LOCAL_URI)
+        return client[MONGO_DB][MONGO_COLLECTION]
 
 # ── Image processing ──────────────────────────────────────────────────────────
 def apply_edits(image_b64: str, brightness: float, contrast: float, saturation: float, filter_name: str,  rotation: int = 0) -> str:
@@ -102,7 +112,15 @@ def index():
     if tag_filter:
         query = {"$or": [{"ai_tags": tag_filter}, {"user_tags": tag_filter}]}
 
-    photos   = list(collection.find(query).sort("captured_at", -1))
+    # Exclude image_b64 from gallery — only load it on single photo view
+    photos = list(collection.find(query, {
+        "filename":    1,
+        "captured_at": 1,
+        "user_tags":   1,
+        "ai_tags":     1,
+        "image_b64":   1,  # Still needed for thumbnails
+    }).sort("captured_at", -1))
+
     all_tags = sorted(set(
         tag
         for p in collection.find({}, {"ai_tags": 1, "user_tags": 1})
