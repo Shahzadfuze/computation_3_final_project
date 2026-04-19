@@ -105,7 +105,38 @@ def apply_edits(image_b64: str, brightness: float, contrast: float, saturation: 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
-    return "Server is working"
+      tag_filter = request.args.get("tag", "").strip()
+    page       = int(request.args.get("page", 1))
+    per_page   = 12
+    collection = get_collection()
+
+    query = {}
+    if tag_filter:
+        query = {"$or": [{"ai_tags": tag_filter}, {"user_tags": tag_filter}]}
+
+    total  = collection.count_documents(query)
+    photos = list(collection.find(query, {
+        "filename":    1,
+        "captured_at": 1,
+        "user_tags":   1,
+        "ai_tags":     1,
+        # NO image_b64 here
+    }).sort("captured_at", -1).skip((page - 1) * per_page).limit(per_page))
+
+    all_tags = sorted(set(
+        tag
+        for p in collection.find({}, {"ai_tags": 1, "user_tags": 1})
+        for tag in p.get("ai_tags", []) + p.get("user_tags", [])
+    ))
+
+    total_pages = (total + per_page - 1) // per_page
+
+    return render_template("index.html",
+                           photos=photos,
+                           all_tags=all_tags,
+                           active_tag=tag_filter,
+                           page=page,
+                           total_pages=total_pages)
 
 @app.route("/photo/<photo_id>")
 def photo(photo_id):
@@ -179,6 +210,25 @@ def save_edits(photo_id):
     except InvalidId:
         flash("Invalid photo ID", "error")
         return redirect(url_for("index"))
+
+@app.route("/photo/<photo_id>/thumbnail")
+def thumbnail(photo_id):
+    try:
+        p = get_collection().find_one(
+            {"_id": ObjectId(photo_id)},
+            {"image_b64": 1}
+        )
+        if not p:
+            return "", 404
+        image_data = base64.b64decode(p["image_b64"])
+        img = Image.open(BytesIO(image_data))
+        img.thumbnail((400, 300))
+        buffer = BytesIO()
+        img.save(buffer, format="JPEG", quality=70)
+        buffer.seek(0)
+        return send_file(buffer, mimetype="image/jpeg")
+    except Exception:
+        return "", 404
 
 
 @app.route("/photo/<photo_id>/restore", methods=["POST"])
