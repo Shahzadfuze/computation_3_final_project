@@ -105,7 +105,7 @@ def apply_edits(image_b64: str, brightness: float, contrast: float, saturation: 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
-      tag_filter = request.args.get("tag", "").strip()
+    tag_filter = request.args.get("tag", "").strip()
     page       = int(request.args.get("page", 1))
     per_page   = 12
     collection = get_collection()
