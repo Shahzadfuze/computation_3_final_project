@@ -21,6 +21,29 @@ Also I wanted to make my own waist-level camera because it seems like a really c
 </p>
 
 
+fuzer-cam/
+├── src/
+│   ├── camera.py          # Captures photos on button press
+│   └── uploader.py        # Uploads photos to MongoDB
+├── web/
+│   ├── app.py             # Flask web app + API
+│   ├── Procfile           # Railway start command
+│   ├── requirements.txt   # Python dependencies
+│   ├── nixpacks.toml      # Railway build config
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── index.html     # Photo gallery
+│   │   └── photo.html     # Photo editor
+│   └── tests/
+│       └── test_api.py    # Unit tests
+├── .github/
+│   └── workflows/
+│       └── ci.yml         # GitHub Actions CI
+├── .env                   # Local secrets (never commit)
+├── .gitignore
+├── SPEC.md                # Full system specification
+└── README.md
+
 ## Hardware
  - **Raseberry Pi 5** 
  - **Raseberry Pi Camera Module 3**
