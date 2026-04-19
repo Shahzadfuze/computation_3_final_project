@@ -1,0 +1,5 @@
+[build]
+rootDirectory = "web"
+
+[deploy]
+startCommand = "gunicorn app:app"
